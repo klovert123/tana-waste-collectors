@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tana Waste Collectors - Make It Happen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #006400;
+            --accent-blue: #1e3a8a;
+            --accent-orange: #f59e0b;
+            --light-bg: #f3f4f6;
+            --text-dark: #1f2937;
+            --white: #ffffff;
+            /* Correct Bin Colors */
+            --bin-green: #22c55e;
+            --bin-blue: #3b82f6;
+            --bin-black: #1f2937;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-dark); overflow-x: hidden; width: 100%; }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--white);
+            padding: 0.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 100px;
+        }
+        .logo img { height: 100px; width: 120px; max-width: 120px; }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--primary-green);
+            z-index: 1001;
+        }
+
+        .nav-links { 
+            display: flex; 
+            list-style: none; 
+            gap: 2rem; 
+            align-items: center; 
+        }
+        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary-green); }
+        .btn-contact { background-color: var(--primary-green); color: var(--white) !important; padding: 0.5rem 1.5rem; border-radius: 20px; }
+
+        /* --- Ripple Hero Section --- */
+        .hero { height: 90vh; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
+        
+        .carousel-slide { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background-size: cover; background-position: center; 
+            clip-path: circle(0% at 50% 50%); 
+            transition: clip-path 2s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 0; 
+        }
+        .carousel-slide::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.3); 
+        }
+        .carousel-slide.active { clip-path: circle(150% at 50% 50%); z-index: 10; }
+        .carousel-slide.exit { clip-path: circle(150% at 50% 50%); z-index: 5; }
+
+        .hero-content { 
+            position: relative; z-index: 20; 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 2rem; border-radius: 15px; 
+            backdrop-filter: blur(3px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            width: 90%;
+            max-width: 800px;
+        }
+        .hero-content h1 { font-size: clamp(2rem, 8vw, 3.5rem); color: var(--accent-blue); text-transform: uppercase; text-shadow: 2px 2px 4px rgba(255,255,255,0.9); }
+        .hero-content h2 { font-size: clamp(1rem, 4vw, 1.5rem); color: var(--accent-orange); font-style: italic; margin-bottom: 2rem; text-shadow: 2px 2px 4px rgba(255,255,255,0.9); }
+
+        /* --- About & Pillars --- */
+        .about { padding: 5rem 5%; background: var(--light-bg); }
+        .section-title { font-size: clamp(1.8rem, 5vw, 2.5rem); margin-bottom: 1.5rem; text-transform: uppercase; border-bottom: 3px solid var(--accent-orange); display: inline-block; }
+        .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        
+        .pillar-card {
+            background: var(--white); padding: 2.5rem; border-radius: 15px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-bottom: 4px solid transparent;
+        }
+        .pillar-card:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); border-bottom: 4px solid var(--primary-green); }
+        .pillar-card i { font-size: 3rem; color: var(--primary-green); margin-bottom: 1.5rem; transition: transform 0.3s; }
+        .pillar-card:hover i { transform: scale(1.2) rotate(5deg); color: var(--accent-orange); }
+
+        /* --- Responsibility Section --- */
+        .waste-guide { padding: 5rem 5%; text-align: center; background-color: var(--white); }
+        .bins-container { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 3rem; }
+        .bin { flex: 1; min-width: 120px; max-width: 150px; transition: transform 0.3s; text-align: center; }
+        .bin:hover { transform: scale(1.1); }
+        .bin i { font-size: 5rem; margin-bottom: 10px; }
+        .bin.green { color: var(--bin-green); }
+        .bin.blue { color: var(--bin-blue); }
+        .bin.black { color: var(--bin-black); }
+
+        /* --- Footer --- */
+        footer { background-color: #111; color: white; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; padding: 4rem 5%; }
+        .footer-section h3 { color: var(--accent-orange); margin-bottom: 1.5rem; }
+        .social-icons a { color: white; font-size: 1.5rem; margin-right: 15px; transition: 0.3s; }
+        .copyright { text-align: center; padding: 1rem; background: #000; font-size: 0.9rem; }
+
+        /* Maps Link Styling */
+        .maps-link { color: white; text-decoration: none; transition: 0.3s; display: block; }
+        .maps-link:hover { color: var(--accent-orange); }
+
+        @media (max-width: 992px) {
+            .menu-btn { display: block; }
+            .nav-links {
+                position: fixed; top: 100px; left: -100%; width: 100%; height: calc(100vh - 100px);
+                background: var(--white); flex-direction: column; justify-content: flex-start;
+                padding-top: 3rem; gap: 2.5rem; z-index: 999; transition: 0.4s ease-in-out;
+            }
+            .nav-links.active { left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo"><img src="img/logo.jpg" alt="Tana Waste Logo"></a>
+        <div class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about us.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="#contact" class="btn-contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="carousel-slide active" style="background-image: url('img/Twc/1.jpeg');"></div>
+        <div class="carousel-slide" style="background-image: url('img/Twc/2.jpeg');"></div>
+        <div class="carousel-slide" style="background-image: url('img/Twc/3.jpeg');"></div>
+        <div class="carousel-slide" style="background-image: url('img/Twc/meeting.jpeg');"></div>
+
+        <div class="hero-content" data-aos="fade-up">
+            <h1>Tana Waste Collectors</h1>
+            <h2>"Make it happen"</h2>
+            <p><strong>Reliable, Eco-friendly, and Professional Waste Management.</strong></p>
+            <div style="margin-top: 20px;">
+                <i class="fa-solid fa-leaf" style="font-size: 2rem; color: var(--primary-green); margin: 0 10px;"></i>
+                <i class="fa-solid fa-recycle" style="font-size: 2.5rem; color: var(--accent-blue); margin: 0 10px;"></i>
+                <i class="fa-solid fa-trash-can" style="font-size: 2rem; color: var(--text-dark); margin: 0 10px;"></i>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div style="text-align: center; max-width: 900px; margin: 0 auto;">
+            <h2 class="section-title" data-aos="fade-up">Who We Are</h2>
+            <p data-aos="fade-up">
+                Tana Waste Collectors Ltd is an environmentally driven waste collection and recycling company based in Hola, Tana River County. Our mission is to provide reliable waste management services while promoting environmental sustainability and creating employment for youth.
+            </p><br>
+            <h1 class="section-title" data-aos="fade-up">Our Pillars</h1>
+        </div>
+
+        <div class="pillars-grid">
+            <div class="pillar-card" data-aos="fade-up" data-aos-delay="100">
+                <i class="fa-solid fa-users-gear"></i>
+                <h3>Community Engagement and Empowerment</h3>
+                <p>Creating employment opportunities and developing skills for local youth in waste management and logistics.</p>
+            </div>
+            <div class="pillar-card" data-aos="fade-up" data-aos-delay="200">
+                <i class="fa-solid fa-bullhorn"></i>
+                <h3>Community Sensitization</h3>
+                <p>Promoting Sustainable Solid waste management through awareness, emphasizing waste segregation at the source into Dry/General, Recyclable, and Organic waste.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="waste-guide">
+        <h2 class="section-title" data-aos="fade-up">Responsibility</h2>
+        <p style="font-size: 1.2rem; margin-top: 10px; margin-bottom: 2rem;">Let's separate and dispose our waste responsibly.</p>
+        
+        <div class="bins-container">
+            <div class="bin green" data-aos="zoom-in">
+                <i class="fa-solid fa-trash"></i>
+                <h4>WET</h4>
+                <p>Food Waste/Organic</p>
+            </div>
+            <div class="bin blue" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-solid fa-trash"></i>
+                <h4>RECYCLABLE</h4>
+                <p>Plastic, Paper, Glass</p>
+            </div>
+            <div class="bin black" data-aos="zoom-in" data-aos-delay="400">
+                <i class="fa-solid fa-trash"></i>
+                <h4>DRY</h4>
+                <p>General Waste</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Tana Waste Collectors</h3>
+                <p>Make it happen. We are dedicated to keeping your environment clean and green.</p>
+                <div class="social-icons">
+                    <p style="margin-bottom:5px; font-size:0.9rem;">@Tanawastecollectors</p>
+                    <a href="https://www.tiktok.com/@tanawastecollectors?_r=1&_t=ZM-92KS1lBqzqG" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://x.com/TanaWaste" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x"></i></a>
+                    <a href="https://www.instagram.com/tana_waste_collectors?igsh=MWphaGY3Nm84bTV0cQ==" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fa-solid fa-phone"></i> 0706656267 / 0724005296</p>
+                <p><i class="fa-solid fa-envelope"></i> info.tanasafi@gmail.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Location</h3>
+                <a href="https://www.google.com/maps/search/?api=1&query=-1.496750,40.034417" target="_blank" class="maps-link">
+                    <p><i class="fa-solid fa-location-dot"></i> HOLA, TANA RIVER</p>
+                    <p style="margin-left: 25px;">OPP PEFA CHURCH</p>
+                </a>
+            </div>
+        </div>
+        <div class="copyright" style="text-align: center; padding: 1rem; background: #000;">
+            &copy; 2025 Tana Waste Collectors Ltd. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        const menuBtn = document.getElementById('menuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        menuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        const slides = document.querySelectorAll('.carousel-slide');
+        let currentSlide = 0;
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('exit');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.remove('exit');
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+</html>

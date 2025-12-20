@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Tana Waste Collectors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #006400;
+            --accent-blue: #1e3a8a;
+            --accent-orange: #f59e0b;
+            --light-bg: #f3f4f6;
+            --text-dark: #1f2937;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-dark); overflow-x: hidden; width: 100%; }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--white);
+            padding: 0.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 100px;
+        }
+        .logo img { height: 100px; width: 120px; max-width: 120px; }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.8rem;
+            color: var(--primary-green);
+        }
+
+        .nav-links { display: flex; list-style: none; gap: 2rem; align-items: center; transition: 0.3s; }
+        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary-green); }
+        .btn-contact { background-color: var(--primary-green); color: var(--white) !important; padding: 0.5rem 1.5rem; border-radius: 20px; }
+
+        @media (max-width: 992px) {
+            .hamburger { display: block; }
+            .nav-links {
+                position: fixed;
+                top: 100px;
+                right: -100%;
+                width: 100%;
+                height: calc(100vh - 100px);
+                background: var(--white);
+                flex-direction: column;
+                align-items: center;
+                padding-top: 2rem;
+                gap: 2rem;
+                box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+                z-index: 999;
+            }
+            .nav-links.active { right: 0; }
+        }
+
+        /* --- Gallery Section --- */
+        .gallery-container { padding: 5rem 10%; }
+        .section-title { text-align: center; font-size: clamp(1.8rem, 5vw, 2.5rem); margin-bottom: 3rem; text-transform: uppercase; border-bottom: 3px solid var(--accent-orange); display: inline-block; padding-bottom: 10px; }
+        
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        .gallery-item {
+            height: 350px; border-radius: 15px; overflow: hidden; position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15); background: #000; cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover { transform: translateY(-5px); }
+
+        .mini-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; z-index: 1; }
+        .mini-slide.active { opacity: 1; z-index: 2; }
+
+        .gallery-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(0,0,0,0.6); color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            z-index: 10; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s; font-size: 1.2rem;
+        }
+        .gallery-item:hover .gallery-nav { opacity: 1; }
+        .gallery-nav:hover { background: var(--primary-green); }
+        .gallery-nav.prev { left: 15px; }
+        .gallery-nav.next { right: 15px; }
+
+        .overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 20px;
+            transform: translateY(0); z-index: 5; text-align: center;
+        }
+        .overlay h4 { font-size: 1.2rem; margin-bottom: 5px; }
+        .overlay p { font-size: 0.9rem; opacity: 0.8; }
+
+        /* --- Fullscreen Lightbox --- */
+        .lightbox {
+            display: none; position: fixed; z-index: 2000; 
+            left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .lightbox-content { 
+            max-width: 95vw; 
+            max-height: 85vh; 
+            object-fit: contain; 
+            animation: zoom 0.4s; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+        #lightboxCaption { color: #fff; padding: 20px; font-size: 1.2rem; text-align: center; width: 80%; }
+        
+        .close-lb { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; z-index: 2100; transition: 0.3s; }
+        .close-lb:hover { color: var(--accent-orange); }
+
+        .lb-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            color: white; font-size: clamp(2rem, 6vw, 4rem); cursor: pointer; padding: 20px;
+            user-select: none; transition: 0.3s; z-index: 2100;
+        }
+        .lb-nav:hover { color: var(--accent-orange); }
+        .lb-prev { left: 10px; }
+        .lb-next { right: 10px; }
+
+        @keyframes zoom { from {transform:scale(0.7); opacity: 0;} to {transform:scale(1); opacity: 1;} }
+
+        /* --- Footer --- */
+        footer { background-color: #111; color: white; padding: 3rem 10%; margin-top: 5rem; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .footer-section h3 { color: var(--accent-orange); margin-bottom: 1.5rem; }
+        .copyright { text-align: center; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #333; font-size: 0.9rem; }
+
+        .maps-link { color: white; text-decoration: none; transition: 0.3s; display: block; }
+        .maps-link:hover { color: var(--accent-orange); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo"><img src="img/logo.jpg" alt="TWC Logo"></a>
+        <div class="hamburger" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about us.html">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html" style="color: var(--primary-green);">Gallery</a></li>
+            <li><a href="#contact" class="btn-contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <div class="gallery-container">
+        <div style="text-align: center;">
+            <h2 class="section-title" data-aos="fade-up">Our Journey</h2>
+            <p style="margin-bottom: 40px;">Visual highlights of our environmental impact in Tana River.</p>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item" data-aos="fade-up" onclick="openLightbox(this)">
+                <img src="img/Twc/Hola Laza Town Cleanig/1.jpeg" class="mini-slide active">
+                <img src="img/Twc/Hola Laza Town Cleanig/2.jpeg" class="mini-slide">
+                <img src="img/Twc/Hola Laza Town Cleanig/3.jpeg" class="mini-slide">
+                <img src="img/Twc/Hola Laza Town Cleanig/4.jpeg" class="mini-slide">
+                <img src="img/Twc/Hola Laza Town Cleanig/5.jpeg" class="mini-slide">
+                <img src="img/Twc/Hola Laza Town Cleanig/6.jpeg" class="mini-slide">
+                <img src="img/Twc/Hola Laza Town Cleanig/7.jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Hola Town CleanUp</h4><p>7 Images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" data-aos-delay="100" onclick="openLightbox(this)">
+                <img src="img/Twc/Bura Town Cleaning/16.jpeg" class="mini-slide active">
+                <img src="img/Twc/Bura Town Cleaning/1.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/2.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/3.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/4.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/5.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/6.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/7.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/8.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/9.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/10.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/11.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/12.jpg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/13.jpeg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/14.jpeg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/15.jpeg" class="mini-slide">
+                <img src="img/Twc/Bura Town Cleaning/17.jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Bura Town Cleanup</h4><p>17 Images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" data-aos-delay="200" onclick="openLightbox(this)">
+                <img src="img/Twc/World Food Day 2025/cover page (1).jpg" class="mini-slide active">
+                <img src="img/Twc/World Food Day 2025/1.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/2.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/3.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/4.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/5.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/6.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/7.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/8.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/9.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/10.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/11.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/12.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/13.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/14.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/15.JPG" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/16.jpeg" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/17.jpeg" class="mini-slide">
+                <img src="img/Twc/World Food Day 2025/18.jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>World Food Day 2025</h4><p>19 Images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" onclick="openLightbox(this)">
+                <img src="img/Twc/Mazingira Day 2025/1.jpeg" class="mini-slide active">
+                <img src="img/Twc/Mazingira Day 2025/2.jpeg" class="mini-slide">
+                <img src="img/Twc/Mazingira Day 2025/3.jpeg" class="mini-slide">
+                <img src="img/Twc/Mazingira Day 2025/4.jpeg" class="mini-slide">
+                <img src="img/Twc/Mazingira Day 2025/5.jpeg" class="mini-slide">
+                <img src="img/Twc/Mazingira Day 2025/6.jpeg" class="mini-slide">
+                <img src="img/Twc/Mazingira Day 2025/7.jpeg" class="mini-slide">
+                <img src="img/Twc/Mazingira Day 2025/8.jpeg" class="mini-slide">
+                <img src="img/Twc/Mazingira Day 2025/9.jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Mazingira Day 2025</h4><p>9 images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" onclick="openLightbox(this)">
+                <img src="img/Twc/Garbege Collection/WhatsApp Image 2025-12-17 at 23.19.19 (7).jpeg" class="mini-slide active">
+                <img src="img/Twc/Garbege Collection/WhatsApp Image 2025-12-17 at 23.19.19.jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Garbage collection Activity</h4><p>2 Images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" onclick="openLightbox(this)">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/1.jpeg" class="mini-slide active">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/2.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/3.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/4.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/5.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/6.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/7.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/8.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/9.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/10.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/12.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/13.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/14.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/15.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge First Session courtsey of SoteHub/16.jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Elevator Blue Challenge First Session courtsey of SoteHub</h4><p>16 Images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" onclick="openLightbox(this)">
+                <img src="img/Twc/Elevator Blue Challenge Second Session courtsey of SoteHub/1.jpeg" class="mini-slide active">
+                <img src="img/Twc/Elevator Blue Challenge Second Session courtsey of SoteHub/2.jpeg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Second Session courtsey of SoteHub/3.jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Elevator Blue Challenge Second Session courtsey of SoteHub</h4><p>3 Images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" onclick="openLightbox(this)">
+                <img src="img/Twc/Sustainable Waste Management Pilocy and Bill Making/WhatsApp Image 2025-12-17 at 23.19.19 (8).jpeg" class="mini-slide active">
+                <img src="img/Twc/Sustainable Waste Management Pilocy and Bill Making/WhatsApp Image 2025-12-17 at 23.19.19 (9).jpeg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Sustainable Waste Management Pilocy and Bill Making</h4><p>2 Images</p></div>
+            </div>
+
+            <div class="gallery-item" data-aos="fade-up" onclick="openLightbox(this)">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-107.jpg" class="mini-slide active">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-124.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-125.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-126.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-18 (1).jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-185.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-193.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-193.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-229.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-25 (1).jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-40.jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-57 (1).jpg" class="mini-slide">
+                <img src="img/Twc/Elevator Blue Challenge Third Session courtsey of SoteHub/SoteHub-97.jpg" class="mini-slide">
+                <button class="gallery-nav prev" onclick="event.stopPropagation(); moveMiniSlide(this, -1)">❮</button>
+                <button class="gallery-nav next" onclick="event.stopPropagation(); moveMiniSlide(this, 1)">❯</button>
+                <div class="overlay"><h4>Elevator Blue Challenge Third Session courtsey of SoteHub</h4><p>13 Images</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightboxModal" class="lightbox" style="display: none;">
+        <span class="close-lb" onclick="closeLightbox()">×</span>
+        <span class="lb-nav lb-prev" onclick="changeLightbox(-1)">❮</span>
+        <span class="lb-nav lb-next" onclick="changeLightbox(1)">❯</span>
+        <img class="lightbox-content" id="lightboxImg">
+        <div id="lightboxCaption"></div>
+    </div>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Tana Waste Collectors</h3>
+                <p>Make it happen. We are dedicated to keeping your environment clean and green.</p>
+                <div class="social-icons">
+                    <p style="margin-bottom:5px; font-size:0.9rem;">@Tanawastecollectors</p>
+                    <a href="https://www.tiktok.com/@tanawastecollectors?_r=1&_t=ZM-92KS1lBqzqG" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://x.com/TanaWaste" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x"></i></a>
+                    <a href="https://www.instagram.com/tana_waste_collectors?igsh=MWphaGY3Nm84bTV0cQ==" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fa-solid fa-phone"></i> +254 706656267</p>
+                <p><i class="fa-solid fa-phone"></i> +254 724005296</p>
+                <p><i class="fa-solid fa-envelope"></i> info.tanasafi@gmail.com</p>
+            </div>
+           <div class="footer-section">
+                <h3>Location</h3>
+                <a href="https://www.google.com/maps/search/?api=1&query=-1.496750,40.034417" target="_blank" class="maps-link">
+                    <p><i class="fa-solid fa-location-dot"></i> HOLA, TANA RIVER</p>
+                    <p style="margin-left: 25px;">OPP PEFA CHURCH</p>
+                </a>
+            </div>
+        </div>
+        <div class="copyright">© 2025 Tana Waste Collectors Limited Company. All Rights Reserved.</div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        let currentLightboxImages = [];
+        let currentLightboxIndex = 0;
+
+        function moveMiniSlide(button, step) {
+            const card = button.closest('.gallery-item');
+            const images = card.querySelectorAll('.mini-slide');
+            let activeIndex = 0;
+            images.forEach((img, index) => {
+                if(img.classList.contains('active')) { activeIndex = index; img.classList.remove('active'); }
+            });
+            let nextIndex = (activeIndex + step + images.length) % images.length;
+            images[nextIndex].classList.add('active');
+        }
+
+        function openLightbox(card) {
+            const images = card.querySelectorAll('.mini-slide');
+            currentLightboxImages = Array.from(images).map(img => ({ src: img.src, desc: img.getAttribute('data-desc') }));
+            const activeImg = card.querySelector('.mini-slide.active');
+            currentLightboxIndex = Array.from(images).indexOf(activeImg);
+            
+            const modal = document.getElementById('lightboxModal');
+            modal.style.display = "flex";
+            updateLightbox();
+        }
+
+        function changeLightbox(step) {
+            currentLightboxIndex = (currentLightboxIndex + step + currentLightboxImages.length) % currentLightboxImages.length;
+            updateLightbox();
+        }
+
+        function updateLightbox() {
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = currentLightboxImages[currentLightboxIndex].src;
+            cap.innerText = currentLightboxImages[currentLightboxIndex].desc;
+        }
+
+        function closeLightbox() { document.getElementById('lightboxModal').style.display = "none"; }
+
+        // Close on background click
+        document.getElementById('lightboxModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLightbox();
+        });
+    </script>
+</body>
+</html>

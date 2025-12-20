@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Tana Waste Collectors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #006400;
+            --accent-blue: #1e3a8a;
+            --accent-orange: #f59e0b;
+            --light-bg: #f3f4f6;
+            --text-dark: #1f2937;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; color: var(--text-dark); overflow-x: hidden; line-height: 1.6; }
+
+        /* --- Collapsible Navigation --- */
+        nav {
+            background: var(--white);
+            padding: 0.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 100px;
+        }
+        .logo img { height: 100px; width: 120px; }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.8rem;
+            color: var(--primary-green);
+        }
+
+        .nav-links { display: flex; list-style: none; gap: 2rem; align-items: center; transition: 0.3s; }
+        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary-green); }
+        .btn-contact { background-color: var(--primary-green); color: var(--white) !important; padding: 0.5rem 1.5rem; border-radius: 20px; }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .nav-links {
+                position: absolute;
+                top: 100px;
+                right: -100%;
+                width: 100%;
+                height: calc(100vh - 100px);
+                background: var(--white);
+                flex-direction: column;
+                align-items: center;
+                padding-top: 2rem;
+                gap: 2rem;
+                box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+                z-index: 100;
+            }
+            .nav-links.active { right: 0; }
+        }
+
+        /* --- About Hero --- */
+        .about-hero {
+            background: linear-gradient(rgba(0, 100, 0, 0.75), rgba(0, 100, 0, 0.75)), url('img/Twc/meeting.jpeg');
+            background-size: cover;
+            background-position: center;
+            height: 45vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 0 5%;
+        }
+        .about-hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); text-transform: uppercase; letter-spacing: 2px; }
+
+        /* --- Content Layouts --- */
+        .content-section { padding: 5rem 10%; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem; align-items: center; }
+        .section-title { font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 1.5rem; text-transform: uppercase; border-bottom: 3px solid var(--accent-orange); display: inline-block; }
+        .highlight-text { color: var(--primary-green); font-weight: 700; }
+
+        /* --- Founder Section --- */
+        .founders-section { background: var(--white); padding: 5rem 10%; text-align: center; }
+        .founders-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 3rem; 
+            margin-top: 3rem;
+            justify-content: center;
+        }
+        .founder-card {
+            background: var(--light-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            transition: 0.3s;
+            border-bottom: 4px solid transparent;
+        }
+        .founder-card:hover {
+            transform: translateY(-10px);
+            border-bottom: 4px solid var(--primary-green);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .founder-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+            border: 5px solid var(--white);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .founder-card h3 { color: var(--accent-blue); margin-bottom: 0.5rem; }
+        .founder-card p { color: var(--primary-green); font-weight: 600; font-style: italic; }
+
+        /* --- Mission & Impact Cards --- */
+        .mission-vision { background: var(--light-bg); padding: 5rem 10%; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .card { background: white; padding: 2.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.3s; border-top: 5px solid var(--primary-green); }
+        .card:hover { transform: translateY(-10px); }
+        .card i { font-size: 3rem; color: var(--accent-orange); margin-bottom: 1.5rem; }
+        .card h3 { color: var(--accent-blue); margin-bottom: 1rem; }
+
+        /* --- Footer --- */
+        footer { background-color: #111; color: white; padding: 3rem 10%; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .footer-section h3 { color: var(--accent-orange); margin-bottom: 1.5rem; }
+        .social-icons a { color: white; font-size: 1.5rem; margin-right: 15px; transition: 0.3s; }
+        .copyright { text-align: center; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #333; font-size: 0.9rem; }
+
+        /* Maps Link Styling */
+        .maps-link { color: white; text-decoration: none; transition: 0.3s; display: block; }
+        .maps-link:hover { color: var(--accent-orange); }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo"><img src="img/logo.jpg" alt="Tana Waste Logo"></a>
+        <div class="hamburger" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about us.html" style="color: var(--primary-green);">About Us</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="#contact" class="btn-contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <section class="about-hero">
+        <h1 data-aos="zoom-in">Making It Happen in Tana River</h1>
+    </section>
+
+    <section class="content-section">
+        <div class="grid-container">
+            <div data-aos="fade-right">
+                <h2 class="section-title">Who We Are</h2>
+                <p>Tana Waste Collectors Ltd is an <span class="highlight-text">environmentally driven waste management company</span> based in Hola, Tana River County. We were established with a clear vision to provide reliable services that balance commercial success with environmental stewardship.</p>
+                <p>Our operational focus spans the entire waste management lifecycle, including the collection, transportation, and professional sorting of household, commercial, and institutional waste.</p>
+            </div>
+            <div data-aos="fade-left">
+                <img src="img/Twc/founders.jpeg" alt="TWC Team" style="width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            </div>
+        </div>
+    </section>
+
+    <section class="mission-vision">
+        <div class="card-grid">
+            <div class="card" data-aos="fade-up">
+                <i class="fa-solid fa-bullseye"></i>
+                <h3>Our Core Mission</h3>
+                <p>To provide reliable waste management services while promoting environmental sustainability, improving agricultural productivity through organic manure, and creating employment opportunities for local youth.</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="200">
+                <i class="fa-solid fa-arrows-spin"></i>
+                <h3>Circular Economy</h3>
+                <p>We transform waste into value. Our facility processes plastics into pellets for manufacturers and turns organic food waste into high-quality manure for local farmers.</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="400">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+                <h3>Community Impact</h3>
+                <p>By employing young people and providing skills in logistics and processing, we are building a sustainable future for the Tana River County workforce.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="founders-section">
+        <h2 class="section-title" data-aos="fade-up">Our Leadership</h2>
+        <div class="founders-grid">
+            <div class="founder-card" data-aos="fade-up" data-aos-delay="100">
+                <img src="img/Twc/Jack.jpeg" alt="Founder Name" class="founder-img">
+                <h3>Jack Ambari</h3>
+                <p>Director</p>
+            </div>
+            <div class="founder-card" data-aos="fade-up" data-aos-delay="200">
+                <img src="img/Twc/Jilloh.jpeg" alt="Founder Name" class="founder-img">
+                <h3>Harrison Jillo Mabonye</h3>
+                <p>Director</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Tana Waste Collectors</h3>
+                <p>Make it happen. We are dedicated to keeping your environment clean and green.</p>
+                <div class="social-icons">
+                    <p style="margin-bottom:5px; font-size:0.9rem;">@Tanawastecollectors</p>
+                    <a href="https://www.tiktok.com/@tanawastecollectors?_r=1&_t=ZM-92KS1lBqzqG" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://x.com/TanaWaste" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x"></i></a>
+                    <a href="https://www.instagram.com/tana_waste_collectors?igsh=MWphaGY3Nm84bTV0cQ==" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fa-solid fa-phone"></i> +254 706656267</p>
+                <p><i class="fa-solid fa-phone"></i> +254 724005296</p>
+                <p><i class="fa-solid fa-envelope"></i> info.tanasafi@gmail.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Location</h3>
+                <a href="https://www.google.com/maps/search/?api=1&query=-1.496750,40.034417" target="_blank" class="maps-link">
+                    <p><i class="fa-solid fa-location-dot"></i> HOLA, TANA RIVER</p>
+                    <p style="margin-left: 25px;">OPP PEFA CHURCH</p>
+                </a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 Tana Waste Collectors Limited Company. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
